@@ -1,0 +1,44 @@
+{
+  "pokemons": [
+    {
+      "nom": "Pikachu",
+      "niveau": 12,
+      "type_": "Electrik",
+      "xp": 60,
+      "genre": "Male",
+      "evolution": "Raichu"
+    },
+    {
+      "nom": "Voltorbe",
+      "niveau": 14,
+      "type_": "Electrik",
+      "xp": 70,
+      "genre": "Femelle",
+      "evolution": "Électrode"
+    },
+    {
+      "nom": "Mystère",
+      "niveau": 7,
+      "type_": "Electrik",
+      "xp": 0,
+      "genre": "Male",
+      "evolution": null
+    },
+    {
+      "nom": "pouka",
+      "niveau": 3,
+      "type_": "Dragon",
+      "xp": 0,
+      "genre": "Male",
+      "evolution": null
+    },
+    {
+      "nom": "Pouki",
+      "niveau": 3,
+      "type_": "Dragon",
+      "xp": 0,
+      "genre": "Femelle",
+      "evolution": null
+    }
+  ]
+}
