@@ -2,43 +2,93 @@
   "pokemons": [
     {
       "nom": "Pikachu",
+      "niveau": 10,
+      "type_": "Electrik",
+      "xp": 55,
+      "genre": "Male",
+      "evolution": "Raichu",
+      "niveau_evolution": 20
+    },
+    {
+      "nom": "Bulbizarre",
       "niveau": 12,
-      "type_": "Electrik",
-      "xp": 60,
+      "type_": "Plante",
+      "xp": 75,
       "genre": "Male",
-      "evolution": "Raichu"
+      "evolution": "Herbizarre",
+      "niveau_evolution": 16
     },
     {
-      "nom": "Voltorbe",
+      "nom": "Salamèche",
       "niveau": 14,
-      "type_": "Electrik",
-      "xp": 70,
-      "genre": "Femelle",
-      "evolution": "Électrode"
+      "type_": "Feu",
+      "xp": 25,
+      "genre": "Male",
+      "evolution": "Reptincel",
+      "niveau_evolution": 16
     },
     {
-      "nom": "Mystère",
+      "nom": "Carapuce",
+      "niveau": 8,
+      "type_": "Eau",
+      "xp": 10,
+      "genre": "Femelle",
+      "evolution": "Carabaffe",
+      "niveau_evolution": 16
+    },
+    {
+      "nom": "Chenipan",
+      "niveau": 3,
+      "type_": "Insecte",
+      "xp": 80,
+      "genre": "Femelle",
+      "evolution": "Chrysacier",
+      "niveau_evolution": 7
+    },
+    {
+      "nom": "Roucool",
+      "niveau": 15,
+      "type_": "Vol",
+      "xp": 30,
+      "genre": "Male",
+      "evolution": "Roucoups",
+      "niveau_evolution": 18
+    },
+    {
+      "nom": "Rattata",
+      "niveau": 6,
+      "type_": "Normal",
+      "xp": 45,
+      "genre": "Femelle",
+      "evolution": "Rattatac",
+      "niveau_evolution": 20
+    },
+    {
+      "nom": "Sabelette",
+      "niveau": 11,
+      "type_": "Roche",
+      "xp": 90,
+      "genre": "Male",
+      "evolution": "Sablaireau",
+      "niveau_evolution": 22
+    },
+    {
+      "nom": "Mélofée",
       "niveau": 7,
-      "type_": "Electrik",
-      "xp": 0,
-      "genre": "Male",
-      "evolution": null
-    },
-    {
-      "nom": "pouka",
-      "niveau": 3,
-      "type_": "Dragon",
-      "xp": 0,
-      "genre": "Male",
-      "evolution": null
-    },
-    {
-      "nom": "Pouki",
-      "niveau": 3,
-      "type_": "Dragon",
-      "xp": 0,
+      "type_": "Normal",
+      "xp": 15,
       "genre": "Femelle",
-      "evolution": null
+      "evolution": "Mélodelfe",
+      "niveau_evolution": 18
+    },
+    {
+      "nom": "Psykokwak",
+      "niveau": 9,
+      "type_": "Eau",
+      "xp": 65,
+      "genre": "Male",
+      "evolution": "Akwakwak",
+      "niveau_evolution": 25
     }
   ]
 }

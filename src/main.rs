@@ -38,6 +38,7 @@ struct Pokemon {
     xp: u32,
     genre: Genre,
     evolution: Option<String>,
+    niveau_evolution: Option<u8>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -50,10 +51,30 @@ struct Elevage {
 impl Pokemon {
     fn gagner_xp(&mut self, montant: u32) {
         self.xp += montant;
+        let mut evolution_declenchee = false;
+        
         while self.xp >= 100 {
             self.niveau += 1;
             self.xp -= 100;
             println!("{} est passé au niveau {} !", self.nom, self.niveau);
+            
+            // Vérifier si le Pokémon peut évoluer
+            if let Some(niveau_requis) = self.niveau_evolution {
+                if self.niveau >= niveau_requis && !evolution_declenchee {
+                    if let Some(evolution) = &self.evolution {
+                        println!("\n⭐️ ÉVOLUTION ! ⭐️");
+                        println!("{} évolue en {} !", self.nom, evolution);
+                        
+                        // Changer le nom du Pokémon pour celui de son évolution
+                        self.nom = evolution.clone();
+                        // Réinitialiser l'évolution pour qu'elle ne se produise qu'une fois
+                        self.evolution = None;
+                        self.niveau_evolution = None;
+                        
+                        evolution_declenchee = true;
+                    }
+                }
+            }
         }
     }
 
@@ -277,13 +298,36 @@ fn tenter_reproduction(p1: &Pokemon, p2: &Pokemon) -> Option<Pokemon> {
         let nom = lire_choix();
         let nom = if nom.is_empty() { "Mystère".to_string() } else { nom };
 
+        // Demander l'évolution potentielle
+        println!("Quelle sera son évolution ? (Laissez vide si aucune)");
+        let evolution_nom = lire_choix();
+        let evolution = if evolution_nom.is_empty() { 
+            None 
+        } else { 
+            Some(evolution_nom) 
+        };
+        
+        // Si une évolution est définie, demander le niveau requis
+        let niveau_evolution = if evolution.is_some() {
+            println!("À quel niveau évoluera-t-il ? (Par défaut: 15)");
+            let niveau_str = lire_choix();
+            if niveau_str.is_empty() {
+                Some(15)
+            } else {
+                Some(niveau_str.parse().unwrap_or(15))
+            }
+        } else {
+            None
+        };
+
         let bebe = Pokemon {
             nom,
             niveau: 1,
             xp: 0,
             type_: p1.type_.clone(), // même type que les parents
             genre,
-            evolution: None,
+            evolution,
+            niveau_evolution,
         };
 
         Some(bebe)
@@ -364,6 +408,28 @@ fn ajouter_pokemon(elevage: &mut Elevage) {
             }
         }
     };
+    
+    // Ajouter l'évolution
+    println!("Quelle sera son évolution ? (Laissez vide si aucune)");
+    let evolution_nom = lire_choix();
+    let evolution = if evolution_nom.is_empty() { 
+        None 
+    } else { 
+        Some(evolution_nom) 
+    };
+    
+    // Si une évolution est définie, demander le niveau requis
+    let niveau_evolution = if evolution.is_some() {
+        println!("À quel niveau évoluera-t-il ? (Par défaut: 15)");
+        let niveau_str = lire_choix();
+        if niveau_str.is_empty() {
+            Some(15)
+        } else {
+            Some(niveau_str.parse().unwrap_or(15))
+        }
+    } else {
+        None
+    };
 
     let nouveau = Pokemon {
         nom,
@@ -371,7 +437,8 @@ fn ajouter_pokemon(elevage: &mut Elevage) {
         xp: 0,
         type_,
         genre,
-        evolution: None,
+        evolution,
+        niveau_evolution,
     };
 
     elevage.ajouter_pokemon(nouveau);
