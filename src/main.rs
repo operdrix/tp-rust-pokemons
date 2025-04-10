@@ -4,6 +4,8 @@ use std::fs::File;
 use std::io::{self, Write};
 use prettytable::{Table, row, Cell, Attr, color};
 
+// ===== STRUCTURES ET TYPES =====
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 enum Type {
     Feu,
@@ -22,11 +24,6 @@ enum Type {
     Glace,
 }
 
-#[derive(Serialize, Deserialize)]
-struct Elevage {
-    pokemons: Vec<Pokemon>,
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 enum Genre {
     Male,
@@ -43,13 +40,12 @@ struct Pokemon {
     evolution: Option<String>,
 }
 
-fn lire_choix() -> String {
-    print!("> ");
-    io::stdout().flush().unwrap(); // Affiche l'invite avant de bloquer
-    let mut choix = String::new();
-    io::stdin().read_line(&mut choix).unwrap();
-    choix.trim().to_string()
+#[derive(Serialize, Deserialize)]
+struct Elevage {
+    pokemons: Vec<Pokemon>,
 }
+
+// ===== IMPLEMENTATIONS DES MÉTHODES =====
 
 impl Pokemon {
     fn gagner_xp(&mut self, montant: u32) {
@@ -64,105 +60,6 @@ impl Pokemon {
     fn peut_se_reproduire_avec(&self, autre: &Pokemon) -> bool {
         // true si types identiques ET genre différents ET niveau >= 5 pour les deux
         self.type_ == autre.type_ && self.genre != autre.genre && self.niveau >= 5 && autre.niveau >= 5
-    }
-}
-
-fn tenter_reproduction(p1: &Pokemon, p2: &Pokemon) -> Option<Pokemon> {
-    if p1.peut_se_reproduire_avec(p2) {
-        let mut rng = rand::thread_rng();
-        let genre = if rng.gen_bool(0.5) {
-            Genre::Male
-        } else {
-            Genre::Femelle
-        };
-
-        // Demander le nom du nouveau Pokémon
-        println!("Quel nom voulez-vous donner au nouveau Pokémon ?");
-        let nom = lire_choix();
-        let nom = if nom.is_empty() { "Mystère".to_string() } else { nom };
-
-        let bebe = Pokemon {
-            nom,
-            niveau: 1,
-            xp: 0,
-            type_: p1.type_.clone(), // même type que les parents
-            genre,
-            evolution: None,
-        };
-
-        Some(bebe)
-    } else {
-        None
-    }
-}
-
-// Fonctions utilitaires pour les tableaux
-fn creer_tableau_pokemon() -> Table {
-    let mut table = Table::new();
-    
-    // En-tête avec style
-    table.add_row(row![
-        FBb->"Nom", 
-        FBb->"Niveau", 
-        FBb->"XP", 
-        FBb->"Type", 
-        FBb->"Genre", 
-        FBb->"Évolution"
-    ]);
-    
-    table
-}
-
-fn creer_tableau_pokemon_avec_indice() -> Table {
-    let mut table = Table::new();
-    
-    // En-tête avec style
-    table.add_row(row![
-        FBb->"#", 
-        FBb->"Nom", 
-        FBb->"Niveau", 
-        FBb->"XP", 
-        FBb->"Type", 
-        FBb->"Genre", 
-        FBb->"Évolution"
-    ]);
-    
-    table
-}
-
-fn obtenir_cellule_type(type_: &Type) -> Cell {
-    match type_ {
-        Type::Feu => Cell::new(&format!("{:?}", type_)).with_style(Attr::ForegroundColor(color::RED)),
-        Type::Eau => Cell::new(&format!("{:?}", type_)).with_style(Attr::ForegroundColor(color::BLUE)),
-        Type::Plante => Cell::new(&format!("{:?}", type_)).with_style(Attr::ForegroundColor(color::GREEN)),
-        Type::Electrik => Cell::new(&format!("{:?}", type_)).with_style(Attr::ForegroundColor(color::YELLOW)),
-        _ => Cell::new(&format!("{:?}", type_))
-    }
-}
-
-fn ajouter_pokemon_au_tableau(table: &mut Table, pokemon: &Pokemon, indice: Option<usize>) {
-    let evolution = pokemon.evolution.clone().unwrap_or_else(|| "Aucune".to_string());
-    let type_cell = obtenir_cellule_type(&pokemon.type_);
-    
-    if let Some(idx) = indice {
-        table.add_row(row![
-            idx,
-            pokemon.nom,
-            pokemon.niveau,
-            pokemon.xp,
-            type_cell,
-            format!("{:?}", pokemon.genre),
-            evolution
-        ]);
-    } else {
-        table.add_row(row![
-            pokemon.nom,
-            pokemon.niveau,
-            pokemon.xp,
-            type_cell,
-            format!("{:?}", pokemon.genre),
-            evolution
-        ]);
     }
 }
 
@@ -276,7 +173,16 @@ impl Elevage {
     }
 }
 
-// Fonction qui demande à l'utilisateur de taper sur une touche pour revenir au menu
+// ===== FONCTIONS UTILITAIRES =====
+
+fn lire_choix() -> String {
+    print!("> ");
+    io::stdout().flush().unwrap(); // Affiche l'invite avant de bloquer
+    let mut choix = String::new();
+    io::stdin().read_line(&mut choix).unwrap();
+    choix.trim().to_string()
+}
+
 fn attendre_touche() {
     println!("");
     println!("Appuiez sur une touche pour revenir au menu...");
@@ -284,7 +190,121 @@ fn attendre_touche() {
     io::stdin().read_line(&mut _dummy).expect("Erreur de lecture");
 }
 
-// Nouvelles fonctions pour gérer les différentes options du menu
+// ===== FONCTIONS DE GESTION DE PRETTYTABLE =====
+
+fn creer_tableau_pokemon() -> Table {
+    let mut table = Table::new();
+    
+    // En-tête avec style
+    table.add_row(row![
+        FBb->"Nom", 
+        FBb->"Niveau", 
+        FBb->"XP", 
+        FBb->"Type", 
+        FBb->"Genre", 
+        FBb->"Évolution"
+    ]);
+    
+    table
+}
+
+fn creer_tableau_pokemon_avec_indice() -> Table {
+    let mut table = Table::new();
+    
+    // En-tête avec style
+    table.add_row(row![
+        FBb->"#", 
+        FBb->"Nom", 
+        FBb->"Niveau", 
+        FBb->"XP", 
+        FBb->"Type", 
+        FBb->"Genre", 
+        FBb->"Évolution"
+    ]);
+    
+    table
+}
+
+fn obtenir_cellule_type(type_: &Type) -> Cell {
+    match type_ {
+        Type::Feu => Cell::new(&format!("{:?}", type_)).with_style(Attr::ForegroundColor(color::RED)),
+        Type::Eau => Cell::new(&format!("{:?}", type_)).with_style(Attr::ForegroundColor(color::BLUE)),
+        Type::Plante => Cell::new(&format!("{:?}", type_)).with_style(Attr::ForegroundColor(color::GREEN)),
+        Type::Electrik => Cell::new(&format!("{:?}", type_)).with_style(Attr::ForegroundColor(color::YELLOW)),
+        _ => Cell::new(&format!("{:?}", type_))
+    }
+}
+
+fn ajouter_pokemon_au_tableau(table: &mut Table, pokemon: &Pokemon, indice: Option<usize>) {
+    let evolution = pokemon.evolution.clone().unwrap_or_else(|| "Aucune".to_string());
+    let type_cell = obtenir_cellule_type(&pokemon.type_);
+    
+    if let Some(idx) = indice {
+        table.add_row(row![
+            idx,
+            pokemon.nom,
+            pokemon.niveau,
+            pokemon.xp,
+            type_cell,
+            format!("{:?}", pokemon.genre),
+            evolution
+        ]);
+    } else {
+        table.add_row(row![
+            pokemon.nom,
+            pokemon.niveau,
+            pokemon.xp,
+            type_cell,
+            format!("{:?}", pokemon.genre),
+            evolution
+        ]);
+    }
+}
+
+// ===== FONCTIONS LIÉES AUX POKÉMON =====
+
+fn tenter_reproduction(p1: &Pokemon, p2: &Pokemon) -> Option<Pokemon> {
+    if p1.peut_se_reproduire_avec(p2) {
+        let mut rng = rand::thread_rng();
+        let genre = if rng.gen_bool(0.5) {
+            Genre::Male
+        } else {
+            Genre::Femelle
+        };
+
+        // Demander le nom du nouveau Pokémon
+        println!("Quel nom voulez-vous donner au nouveau Pokémon ?");
+        let nom = lire_choix();
+        let nom = if nom.is_empty() { "Mystère".to_string() } else { nom };
+
+        let bebe = Pokemon {
+            nom,
+            niveau: 1,
+            xp: 0,
+            type_: p1.type_.clone(), // même type que les parents
+            genre,
+            evolution: None,
+        };
+
+        Some(bebe)
+    } else {
+        None
+    }
+}
+
+// ===== FONCTIONS DE L'INTERFACE UTILISATEUR =====
+
+fn afficher_menu() {
+    println!("\n=== Menu de l'Élevage Pokémon ===");
+    println!("1. Afficher tous les Pokémon");
+    println!("2. Ajouter un Pokémon manuellement");
+    println!("3. Entraîner tous les Pokémon");
+    println!("4. Tenter une reproduction");
+    println!("5. Sauvegarder dans un fichier");
+    println!("6. Charger depuis un fichier");
+    println!("7. Quitter");
+}
+
 fn afficher_pokemon(elevage: &Elevage) {
     elevage.afficher_tous();
 }
@@ -421,16 +441,7 @@ fn charger_elevage(elevage: &mut Elevage) {
     }
 }
 
-fn afficher_menu() {
-    println!("\n=== Menu de l'Élevage Pokémon ===");
-    println!("1. Afficher tous les Pokémon");
-    println!("2. Ajouter un Pokémon manuellement");
-    println!("3. Entraîner tous les Pokémon");
-    println!("4. Tenter une reproduction");
-    println!("5. Sauvegarder dans un fichier");
-    println!("6. Charger depuis un fichier");
-    println!("7. Quitter");
-}
+// ===== FONCTION PRINCIPALE =====
 
 fn main() {
     let mut elevage = Elevage::new();
